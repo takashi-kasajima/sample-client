@@ -1,9 +1,22 @@
 import Head from "next/head";
 import theme from "../components/theme";
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ThemeProvider } from "@mui/material";
+import { IUser } from "modules/user";
+import { getUserList } from "libs/http-client/user";
 
-export default function Home() {
+export default function Index() {
+  const [userList, setUserList] = useState<IUser[]>([]);
+
+  useEffect(() => {
+    fetchUserList();
+  }, []);
+
+  const fetchUserList = useCallback(async () => {
+    const { userList: _userList } = await getUserList();
+    setUserList(_userList);
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <Head>
@@ -34,7 +47,9 @@ export default function Home() {
           backgroundColor: "rgb(245, 241, 232)",
         }}
       >
-        hello, world
+        {userList.map((user) => (
+          <div>{user.user_id}</div>
+        ))}
       </main>
     </ThemeProvider>
   );
